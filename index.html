@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fat Bomb: Dust — тактический шутер 3×3</title>
+<style>
+:root{--bg:#14110d;--bg2:#1c1812;--card:#211c14;--ink:#f1e8d2;--mut:#b5a98c;--fat:#e6c229;--red:#d9402f;--grn:#3fa583;--line:#3a3325;--glow:rgba(230,194,41,.35);color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f4ecd8;--bg2:#ebe0c4;--card:#fbf6e8;--ink:#1d1810;--mut:#6a5e44;--fat:#b88f00;--line:#d6c8a2;--glow:rgba(184,143,0,.3);color-scheme:light}}
+:root[data-theme="light"]{--bg:#f4ecd8;--bg2:#ebe0c4;--card:#fbf6e8;--ink:#1d1810;--mut:#6a5e44;--fat:#b88f00;--line:#d6c8a2;--glow:rgba(184,143,0,.3);color-scheme:light}
+:root[data-theme="dark"]{--bg:#14110d;--bg2:#1c1812;--card:#211c14;--ink:#f1e8d2;--mut:#b5a98c;--fat:#e6c229;--line:#3a3325;--glow:rgba(230,194,41,.35);color-scheme:dark}
+html{scroll-behavior:smooth;scroll-padding-top:calc(70px + env(safe-area-inset-top,0px))}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:500 17px/1.55 Bahnschrift,"Segoe UI","Arial Narrow",system-ui,sans-serif;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:19;background:var(--bg)}
+h1,h2,h3{line-height:1.05;font-weight:800;letter-spacing:-.01em}
+a{color:inherit;text-decoration:none}
+.w{max-width:1100px;margin:0 auto;padding:0 20px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .w{display:flex;align-items:center;gap:18px;height:58px}
+.logo{font-weight:900;font-size:20px;color:var(--fat);white-space:nowrap}
+nav .l{display:flex;gap:16px;margin-left:auto;font-size:15px;overflow-x:auto;scrollbar-width:none}
+nav .l a{color:var(--mut);white-space:nowrap;transition:color .2s}nav .l a:hover{color:var(--fat)}
+#th{background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:5px 9px;cursor:pointer;font-size:15px}
+.hero{position:relative;padding:70px 0 90px;text-align:center;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-20% -10% auto;height:120%;background:radial-gradient(ellipse at 50% 30%,var(--glow),transparent 60%);animation:pulse 5s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.5;transform:scale(1.08)}}
+.stripe{height:14px;background:repeating-linear-gradient(-45deg,var(--fat) 0 16px,#111 16px 32px);background-size:45px 45px;animation:mv 1.6s linear infinite}
+@keyframes mv{to{background-position:45px 0}}
+.bomb{position:relative;width:150px;height:150px;margin:0 auto 24px;animation:float 3.4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-14px) rotate(3deg)}}
+.bomb i{position:absolute;inset:18px 12px 0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3a3,var(--fat) 45%,#8a6c00);box-shadow:0 0 60px var(--glow),inset -10px -14px 24px rgba(0,0,0,.35)}
+.bomb b{position:absolute;left:50%;top:6px;width:10px;height:30px;margin-left:-5px;background:#555;border-radius:4px}
+.bomb s{position:absolute;left:50%;top:-8px;width:14px;height:14px;margin-left:-3px;border-radius:50%;background:#ff5a2b;box-shadow:0 0 18px 6px #ff5a2b;animation:fuse .5s steps(2) infinite}
+@keyframes fuse{50%{transform:scale(.5);opacity:.6}}
+.bomb em{position:absolute;inset:60px 0 auto;font-style:normal;font-weight:900;font-size:22px;color:#1a1408;text-align:center;letter-spacing:.06em}
+.hero h1{font-size:clamp(44px,10vw,104px);position:relative}
+.hero h1 span{color:var(--fat);display:inline-block;animation:glitch 4s infinite}
+@keyframes glitch{0%,92%,100%{transform:none;text-shadow:none}94%{transform:translate(-3px,1px);text-shadow:3px 0 var(--red),-3px 0 var(--grn)}96%{transform:translate(3px,-1px)}}
+.hero p.sub{max-width:640px;margin:18px auto 28px;color:var(--mut);font-size:19px;position:relative}
+.btn{display:inline-block;background:var(--fat);color:#1a1408;font-weight:800;padding:14px 26px;border-radius:6px;margin:5px;border:2px solid var(--fat);transition:transform .2s,box-shadow .2s;cursor:pointer;font-size:17px;font-family:inherit;position:relative}
+.btn:hover{transform:translateY(-3px);box-shadow:0 10px 28px var(--glow)}
+.btn.o{background:none;color:var(--ink);border-color:var(--line)}.btn.o:hover{border-color:var(--fat)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:46px;position:relative}
+.stats div{background:var(--card);border:1px solid var(--line);padding:16px;border-radius:10px}
+.stats b{display:block;font-size:40px;color:var(--fat);font-weight:900}.stats span{color:var(--mut);font-size:14px}
+section{padding:80px 0}section.alt{background:var(--bg2)}
+.tag{color:var(--fat);font-weight:800;letter-spacing:.14em;font-size:13px;text-transform:uppercase}
+section h2{font-size:clamp(30px,5vw,50px);margin:8px 0 14px}
+.lead{color:var(--mut);max-width:680px;margin-bottom:34px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;transition:transform .25s,border-color .25s,box-shadow .25s}
+.card:hover{transform:translateY(-6px);border-color:var(--fat);box-shadow:0 14px 34px var(--glow)}
+.card .ic{font-size:34px;margin-bottom:8px}.card h3{font-size:22px;margin-bottom:6px}.card p{color:var(--mut);font-size:15.5px}
+.rv{opacity:0;transform:translateY(34px);transition:opacity .7s,transform .7s}.rv.in{opacity:1;transform:none}
+.two{display:grid;grid-template-columns:1.1fr 1fr;gap:34px;align-items:center}
+@media(max-width:800px){.two{grid-template-columns:1fr}nav .l{font-size:14px}}
+.mapbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+canvas#mp{width:100%;height:auto;display:block;image-rendering:pixelated;border-radius:6px}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;font-size:13px;color:var(--mut)}.legend span{border:1px solid var(--line);border-radius:20px;padding:2px 10px}
+.list{list-style:none;padding:0;display:grid;gap:10px}.list li{padding-left:28px;position:relative;color:var(--mut)}.list li::before{content:"✦";position:absolute;left:0;color:var(--fat)}
+.list b{color:var(--ink)}
+.gun{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:26px;text-align:center}
+.gun svg{width:100%;max-width:460px;height:auto;filter:drop-shadow(0 8px 20px var(--glow));transition:filter .4s}
+.gun svg.rb{animation:hue 4s linear infinite}@keyframes hue{to{filter:hue-rotate(360deg) drop-shadow(0 8px 20px var(--glow))}}
+.sw{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px}
+.sw button{border:2px solid transparent;border-radius:6px;padding:8px 14px;font:700 14px inherit;font-family:inherit;color:#fff;text-shadow:0 1px 2px #000;cursor:pointer;transition:transform .2s}
+.sw button:hover{transform:scale(1.07)}.sw button.on{border-color:var(--ink)}
+.sbwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:15px;min-width:520px}
+th{color:var(--mut);font-weight:600;text-align:right;padding:10px 12px;border-bottom:2px solid var(--line)}th:first-child,td:first-child{text-align:left}
+td{text-align:right;padding:10px 12px;border-bottom:1px solid var(--line)}tr.me td{background:var(--glow)}
+tr.t th:first-child{color:var(--grn)}tr.t.r th:first-child{color:var(--red)}
+.kb{display:inline-block;min-width:32px;text-align:center;padding:2px 9px;border:1px solid var(--line);border-bottom-width:3px;border-radius:6px;background:var(--bg2);font-weight:800;font-size:14px}
+.ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}.ctl div{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.ctl span{color:var(--mut);font-size:15px}
+.tl{border-left:3px solid var(--fat);padding-left:22px;display:grid;gap:26px}
+.tl div{position:relative}.tl div::before{content:"";position:absolute;left:-31px;top:6px;width:13px;height:13px;border-radius:50%;background:var(--fat);box-shadow:0 0 0 5px var(--glow)}
+.tl h3{font-size:22px}.tl p{color:var(--mut);font-size:15.5px}
+footer{padding:46px 0;text-align:center;color:var(--mut);font-size:14px;border-top:1px solid var(--line)}
+.cta{text-align:center;padding:90px 0}.cta h2{font-size:clamp(34px,7vw,64px)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<nav><div class="w"><a class="logo" href="#top">💣 FAT BOMB</a><div class="l"><a href="#about">Об игре</a><a href="#map">Карта</a><a href="#bots">Боты</a><a href="#skins">Скины</a><a href="#tab">Таблица</a><a href="#ctl">Управление</a><a href="#log">Версии</a><a href="#cta">Загрузка</a></div><button id="th" aria-label="Тема">◐</button></div></nav>
+
+<header class="hero" id="top">
+<div class="w">
+<div class="bomb"><b></b><s></s><i></i><em>FAT</em></div>
+<h1>FAT BOMB<br><span>DUST</span></h1>
+<p class="sub">Соревновательный тактический шутер 3×3 прямо в браузере. Заложи жирную бомбу или останови её — у тебя 13 побед и один шанс.</p>
+<a class="btn" href="https://kotlenyc-tech.github.io/FB-Game/" target="_blank" rel="noopener">Играть онлайн</a>
+<a class="btn o" href="#cta">Загрузка</a>
+<div class="stats">
+<div><b data-n="13">0</b><span>побед до финала</span></div>
+<div><b data-n="2">0</b><span>карты в игре</span></div>
+<div><b data-n="6">0</b><span>видов оружия</span></div>
+<div><b data-n="5">0</b><span>скинов на всё</span></div>
+</div>
+</div>
+</header>
+<div class="stripe"></div>
+
+<section id="about"><div class="w">
+<span class="tag rv">Об игре</span><h2 class="rv">Раунд, бомба, 40 секунд</h2>
+<p class="lead rv">Ты — Андрей, защитник. Узай прячет жир-бомбу на точке A или B, а твоя команда с Kirill и Batya Uzaya должна успеть её обезвредить. Игра на движке-рейкастере: никаких установок, всё в одном HTML-файле.</p>
+<div class="grid">
+<div class="card rv"><div class="ic">🎯</div><h3>3 на 3</h3><p>Команда Андрея против команды Узая. 24 раунда, после 12-го стороны меняются, деньги сбрасываются.</p></div>
+<div class="card rv"><div class="ic">💰</div><h3>Экономика</h3><p>Закупка на старте раунда: пистолеты, MP9, AK-47, M4A4 и осколочные гранаты. Победа даёт $3250, убийство — $300.</p></div>
+<div class="card rv"><div class="ic">💥</div><h3>Жир-бомба</h3><p>Закладка 3 секунды, обезвреживание 5, взрыв через 40. Тикает всё быстрее — нервы не железные.</p></div>
+<div class="card rv"><div class="ic">🔫</div><h3>Честный урон</h3><p>Автоматы: 1 в голову или 2 в тело. Пистолеты: 2 в голову или 4 в тело. У всех по 100 HP.</p></div>
+</div></div></section>
+
+<section class="alt" id="map"><div class="w two">
+<div><span class="tag rv">Новая карта</span><h2 class="rv">Шестерские мечты</h2>
+<p class="lead rv">Полная копия легендарного Mirage, перенесённая в наш движок. Узнаваемые локации и маршруты — от рампы на A до андерпасса на B.</p>
+<ul class="list rv"><li><b>Точка A:</b> рампа, Палас, Кэтвок, Джангл и Окно</li><li><b>Точка B:</b> апартаменты, Андерпасс и Маркет</li><li><b>Мид:</b> коннектор прямо в спавн защиты</li><li>Тёплая штукатурка, бирюзовые двери и терракотовые стены</li></ul></div>
+<div class="mapbox rv"><canvas id="mp" width="400" height="320"></canvas>
+<div class="legend"><span>🟧 T — спавн атаки</span><span>🟦 CT — спавн защиты</span><span>A / B — точки</span></div></div>
+</div></section>
+
+<section id="bots"><div class="w">
+<span class="tag rv">Искусственный интеллект</span><h2 class="rv">Боты, которые играют</h2>
+<p class="lead rv">В версии 1.0 боты полностью переписаны. Они больше не стоят столбами и не вертят головой — они идут, слушают и стреляют.</p>
+<div class="grid">
+<div class="card rv"><div class="ic">🗺️</div><h3>Разные маршруты</h3><p>Атака делится: один идёт рампой, другой кэтвоком, третий лурк по миду. Каждый раунд по-новому.</p></div>
+<div class="card rv"><div class="ic">👂</div><h3>Слышат выстрелы</h3><p>Выстрел за 20 клеток — и бот идёт проверять источник звука. Прятаться стреляя не получится.</p></div>
+<div class="card rv"><div class="ic">⏱️</div><h3>Реакция и прицел</h3><p>Сначала бот поворачивается и реагирует, потом точность растёт. Наводятся не мгновенно, но убивают.</p></div>
+<div class="card rv"><div class="ic">🛡️</div><h3>Патруль защиты</h3><p>Защитники ходят между позициями, стоят, смотрят в сторону врага, а при закладке идут на обезвреживание.</p></div>
+</div></div></section>
+
+<section class="alt" id="skins"><div class="w two">
+<div class="gun rv"><svg id="gs" viewBox="0 0 460 150"><g id="gg"><rect x="20" y="52" width="300" height="26" rx="4" data-k="m"/><rect x="320" y="58" width="120" height="12" rx="3" data-k="d"/><rect x="436" y="55" width="14" height="18" rx="2" data-k="h"/><rect x="120" y="42" width="130" height="12" rx="3" data-k="s"/><path d="M150 78h50l-14 62h-40z" data-k="w"/><path d="M60 78h58v18h-30l-12 34h-26z" data-k="w"/><rect x="210" y="78" width="30" height="46" rx="6" data-k="d"/><rect x="255" y="46" width="60" height="8" data-k="h"/></g></svg>
+<div class="sw" id="sw"></div></div>
+<div><span class="tag rv">Скины</span><h2 class="rv">Раскрась свой арсенал</h2>
+<p class="lead rv">Отдельная вкладка «Скины» в главном меню. Выбирай расцветку для каждого ствола или применяй ко всему оружию сразу.</p>
+<ul class="list rv"><li><b>Жир-бомба</b> — жёлтый с чёрным</li><li><b>Кибер-неон</b> — бирюзовый и маджента</li><li><b>Лава</b> — раскалённый красно-оранжевый</li><li><b>Лёд</b> — холодный голубой</li><li><b>Радуга</b> — переливается прямо в руках</li></ul></div>
+</div></section>
+
+<section id="tab"><div class="w">
+<span class="tag rv">Новое в 1.0</span><h2 class="rv">TAB — таблица игроков</h2>
+<p class="lead rv">Зажми <span class="kb">TAB</span> и увидишь, кто в матче лучший: убийства, смерти, K/D, процент хедшотов и урон за раунд. Лидер отмечен звездой.</p>
+<div class="sbwrap rv"><table>
+<tr class="t"><th>Команда Андрея · 7</th><th>У</th><th>А</th><th>С</th><th>K/D</th><th>HS%</th><th>ADR</th><th>$</th></tr>
+<tr><td>★ Kirill</td><td>14</td><td>3</td><td>8</td><td>1.75</td><td>43</td><td>96</td><td>5400</td></tr>
+<tr class="me"><td>Андрей</td><td>11</td><td>2</td><td>9</td><td>1.22</td><td>36</td><td>81</td><td>4100</td></tr>
+<tr><td>Batya Uzaya</td><td>6</td><td>5</td><td>11</td><td>0.55</td><td>17</td><td>58</td><td>2900</td></tr>
+<tr class="t r"><th>Команда Узая · 5</th><th>У</th><th>А</th><th>С</th><th>K/D</th><th>HS%</th><th>ADR</th><th>$</th></tr>
+<tr><td>Vova</td><td>12</td><td>1</td><td>10</td><td>1.20</td><td>50</td><td>88</td><td>3600</td></tr>
+<tr><td>Uzay</td><td>9</td><td>4</td><td>9</td><td>1.00</td><td>22</td><td>72</td><td>3300</td></tr>
+<tr><td>Artem</td><td>7</td><td>2</td><td>12</td><td>0.58</td><td>29</td><td>61</td><td>2500</td></tr>
+</table></div>
+<p class="lead rv" style="margin-top:14px;font-size:14px">Пример таблицы. Реальные цифры считаются в твоём матче.</p>
+</div></section>
+
+<section class="alt" id="ctl"><div class="w">
+<span class="tag rv">Управление</span><h2 class="rv">Пальцы на клавиши</h2>
+<p class="lead rv">Присед теперь настоящий: опускается высота глаз, а не поворачивается голова. На телефоне есть экранные кнопки.</p>
+<div class="ctl rv">
+<div><span class="kb">WASD</span><span>Движение</span></div><div><span class="kb">ЛКМ</span><span>Огонь, бросок гранаты</span></div>
+<div><span class="kb">1 2 3</span><span>Автомат, пистолет, граната</span></div><div><span class="kb">Ctrl / C</span><span>Присесть (держать)</span></div>
+<div><span class="kb">E</span><span>Закладка и обезвреживание</span></div><div><span class="kb">R</span><span>Перезарядка</span></div>
+<div><span class="kb">B</span><span>Закупка в первые 10 секунд</span></div><div><span class="kb">TAB</span><span>Таблица игроков</span></div>
+<div><span class="kb">G</span><span>Быстрый бросок гранаты</span></div><div><span class="kb">Esc</span><span>Пауза</span></div>
+</div></div></section>
+
+<section id="log"><div class="w">
+<span class="tag rv">История</span><h2 class="rv">Версии</h2>
+<div class="tl">
+<div class="rv"><h3>v1.0 — Шестерские мечты</h3><p>Новая карта Mirage, переписанные боты, скины, настоящий присед и таблица на TAB.</p></div>
+<div class="rv"><h3>v0.8 — Детализация</h3><p>Пальмы, бочки, фонари, живые персонажи с оружием в руках и анимацией шагов.</p></div>
+<div class="rv"><h3>v0.7 — Чёткая картинка</h3><p>Повышенное разрешение, контрастный прицел, оружие в правой руке.</p></div>
+<div class="rv"><h3>v0.6 — Слоты</h3><p>Слоты оружия 1, 2, 3, приседание и компактные пистолеты.</p></div>
+<div class="rv"><h3>v0.5 — Руки и меню</h3><p>Оружие от первого лица, новая система урона и главный экран с портретом Андрея.</p></div>
+</div></div></section>
+
+<section class="alt cta" id="cta"><div class="w">
+<span class="tag rv">Загрузка</span>
+<h2 class="rv">Готов остановить бомбу?</h2>
+<p class="lead rv" style="margin:12px auto 26px">Скачай игру на странице загрузки или запусти её прямо сейчас в браузере без установки.</p>
+<a class="btn rv" href="https://kotlenyc-tech.github.io/FB-Game-download/" target="_blank" rel="noopener">Перейти на сайт FB-Game-download</a>
+<a class="btn o rv" href="https://kotlenyc-tech.github.io/FB-Game/" target="_blank" rel="noopener">Играть в браузере (FB-Game)</a>
+</div></section>
+
+<footer><div class="w">Fat Bomb: Dust · версия 1.0 · сделано с жиром и любовью 💣</div></footer>
+
+<script>
+(function(){
+var R=document.documentElement,th=document.getElementById('th');
+th.onclick=function(){var d=getComputedStyle(R).colorScheme.indexOf('dark')>-1;R.setAttribute('data-theme',d?'light':'dark')};
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.15});
+document.querySelectorAll('.rv').forEach(function(el,i){el.style.transitionDelay=(i%4)*70+'ms';io.observe(el)});
+var co=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;var el=e.target,n=+el.dataset.n,t0=performance.now();(function f(t){var k=Math.min(1,(t-t0)/1200);el.textContent=Math.round(n*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)})(t0);co.unobserve(el)})});
+document.querySelectorAll('[data-n]').forEach(function(el){co.observe(el)});
+/* карта */
+var RC=[[10,26,22,30],[23,27,36,29],[32,18,36,26],[29,10,36,17],[29,18,30,23],[22,22,30,23],[17,14,21,25],[23,14,27,19],[22,16,22,18],[24,9,27,12],[25,13,26,13],[28,10,28,11],[23,8,24,8],[16,2,23,7],[29,3,37,8],[24,4,28,6],[33,9,36,9],[18,8,20,13],[4,3,14,11],[15,5,15,6],[4,12,8,27],[9,26,9,27],[11,20,16,22],[11,12,13,19]];
+var cv=document.getElementById('mp'),g=cv.getContext('2d'),S=10,n=0,drawn=false;
+var LB=[['A',32.5,13.5,'#e6c229'],['B',8.5,7.5,'#e6c229'],['T',16,28.5,'#ff9a3c'],['CT',20,4.5,'#4aa8ff'],['МИД',19,19,'#f1e8d2']];
+function draw(k){g.fillStyle='#14110d';g.fillRect(0,0,400,320);
+for(var i=0;i<Math.min(k,RC.length);i++){var r=RC[i];g.fillStyle=i%2?'#c9a874':'#d8b985';g.fillRect(r[0]*S,r[1]*S,(r[2]-r[0]+1)*S,(r[3]-r[1]+1)*S)}
+if(k>=RC.length){g.font='bold 15px sans-serif';g.textAlign='center';LB.forEach(function(l){g.fillStyle='rgba(0,0,0,.55)';g.beginPath();g.arc(l[1]*S,l[2]*S,13,0,7);g.fill();g.fillStyle=l[3];g.fillText(l[0],l[1]*S,l[2]*S+5)})}}
+draw(0);
+new IntersectionObserver(function(es,o){if(es[0].isIntersecting&&!drawn){drawn=true;o.disconnect();var t=setInterval(function(){draw(++n);if(n>RC.length)clearInterval(t)},120)}},{threshold:.4}).observe(cv);
+/* скины */
+var SK=[['Стандарт',{m:'#3a3d42',d:'#1b1c1f',h:'#5e6269',s:'#828890',w:'#8a5a2b'},'#555'],['Жир-бомба',{m:'#e6c229',d:'#16140e',h:'#ffec82',s:'#f5d746',w:'#d6aa1e'},'linear-gradient(90deg,#e6c229,#ffec82,#d6aa1e)'],['Кибер-неон',{m:'#18c4bc',d:'#120828',h:'#ff40c8',s:'#5af0e8',w:'#8628c8'},'linear-gradient(90deg,#18c4bc,#ff40c8,#8628c8)'],['Лава',{m:'#c43014',d:'#220a06',h:'#ffb02c',s:'#ff781e',w:'#781c0a'},'linear-gradient(90deg,#c43014,#ffb02c,#781c0a)'],['Лёд',{m:'#96cdeb',d:'#283c5a',h:'#f0faff',s:'#d2ebfa',w:'#64a0d2'},'linear-gradient(90deg,#96cdeb,#f0faff,#64a0d2)'],['Радуга',{m:'#e63c3c',d:'#2a1a40',h:'#ffe14a',s:'#3cd2c8',w:'#8a46e6'},'linear-gradient(90deg,#e33,#ec3,#3d5,#3cd,#a4e)']];
+var sw=document.getElementById('sw'),gs=document.getElementById('gs'),gg=document.getElementById('gg');
+function ap(i){var c=SK[i][1];gg.querySelectorAll('[data-k]').forEach(function(e){e.setAttribute('fill',c[e.dataset.k])});gs.classList.toggle('rb',i==5);sw.querySelectorAll('button').forEach(function(b,j){b.classList.toggle('on',j==i)})}
+SK.forEach(function(s,i){var b=document.createElement('button');b.textContent=s[0];b.style.background=s[2];b.onclick=function(){ap(i)};sw.appendChild(b)});
+ap(1);
+})();
+</script>
+</body>
+</html>
